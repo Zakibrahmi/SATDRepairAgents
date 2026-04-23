@@ -1,7 +1,38 @@
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List
-import os
+
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover - optional at runtime
+    load_dotenv = None
+
+
+def _load_project_dotenv() -> None:
+    """
+    Load the project-level `.env` file so settings such as OPENROUTER_API_KEY are
+    visible when the runner is started without manually exporting environment vars.
+    """
+    current = Path(__file__).resolve()
+    for parent in [current.parent, *current.parents]:
+        env_path = parent / ".env"
+        if env_path.exists():
+            if load_dotenv is not None:
+                load_dotenv(env_path, override=False)
+            else:
+                for raw_line in env_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                    line = raw_line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    os.environ.setdefault(key, value)
+            return
+
+
+_load_project_dotenv()
 
 
 @dataclass
@@ -32,7 +63,11 @@ class SATDAgentConfig:
     codex_cli_command: str = os.getenv("SATD_CODEX_CLI_COMMAND", "")
     codex_cli_timeout_seconds: int = int(os.getenv("SATD_CODEX_CLI_TIMEOUT_SECONDS", "180"))
 
-    github_token: str = os.getenv("github", "")
+    github_token: str = (
+        os.getenv("GITHUB", "")
+        or os.getenv("GITHUB_TOKEN", "")
+        or os.getenv("github", "")
+    )
 
     # Recommended main setup for the dissertation:
     # one orchestrating SATD-Agent with two explicit agents:

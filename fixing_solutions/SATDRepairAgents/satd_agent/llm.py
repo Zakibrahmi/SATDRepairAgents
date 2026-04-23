@@ -49,7 +49,10 @@ class SATDAgentLLM:
         fallback: Dict[str, Any],
     ) -> Dict[str, Any]:
         if self.client is None:
-            return dict(fallback)
+            raise RuntimeError(
+                "OpenRouter client is unavailable. Ensure the 'openai' package is installed "
+                "and OPENROUTER_API_KEY is loaded into the environment (for example via the project .env file)."
+            )
 
         response = self.client.chat.completions.create(
             model=model_name,
