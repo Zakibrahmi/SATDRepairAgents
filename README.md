@@ -75,7 +75,7 @@ This folder contains the proposed SATD repair agent pipeline.
 
 #### Solution overview
 
-`SATDRepairAgents` is an agentic repair pipeline that combines repository retrieval, repository exploration, structured SATD understanding, fix planning, patch generation, and validation.
+`SATDRepairAgents` is an agentic repair pipeline in which the explorer agent is responsible for repository retrieval and repository exploration before the downstream understanding, planning, patch generation, and validation stages.
 
 The implementation is organized around the class:
 
@@ -113,10 +113,10 @@ For each SATD instance, the pipeline performs the following steps:
 
 The proposed solution is organized as an explicit multi-stage agent pipeline:
 
-- retrieval layer
-  - non-LLM repository artifact collection
 - explorer agent
-  - repository exploration and summarization
+  - performs repository retrieval and artifact collection
+  - gathers surrounding code, commit history, dependency files, related tests, and lexical search hits
+  - performs repository exploration and summarization
   - can use local Codex CLI
 - generator agent
   - SATD understanding
