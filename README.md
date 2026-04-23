@@ -89,6 +89,7 @@ For each SATD instance, the pipeline performs the following steps:
 1. Context retrieval
    - retrieves local repository context from the cloned repository
    - gathers surrounding code, recent commit history, dependency files, likely tests, and lexical search hits
+   - when GitHub access is configured, also retrieves PR-linked context centered on the fixing commit
 2. Repository exploration
    - uses a local Codex explorer when configured
    - summarizes repository structure and likely repair-relevant artifacts
@@ -112,7 +113,7 @@ The proposed solution is organized as an explicit multi-stage agent pipeline:
 
 - explorer agent
   - performs repository retrieval and artifact collection
-  - gathers surrounding code, commit history, dependency files, related tests, and lexical search hits
+  - gathers surrounding code, commit history, dependency files, related tests, lexical search hits, and PR-related artifacts
   - performs repository exploration and summarization
   - can use local Codex CLI
 - generator agent
@@ -145,6 +146,27 @@ Important generated fields include:
 - `validation_confidence`
 - `fix_confidence`
 - `step_trace_json`
+
+#### Pull-request retrieval
+
+When a GitHub token is configured, `SATDRepairAgents` enriches local repository retrieval with PR artifacts.
+
+The PR retriever first looks up pull requests linked directly to the `fix_commit`, and then collects:
+
+- PR title
+- PR body / description
+- PR URL
+- PR state
+- merge status and merge time
+- changed-file count
+- commit count
+- issue-comment count
+- review-comment count
+- changed files with truncated patch snippets
+- top-level PR comments
+- inline review comments
+
+In addition to commit-linked PR retrieval, the agent still performs lightweight GitHub search over repository discussions using the SATD file name and SATD comment text. All retrieved PR and discussion artifacts are injected into the hybrid context alongside local code, recent commits, dependency files, and related tests before downstream understanding, planning, and patch generation.
 
 #### Configuration
 
