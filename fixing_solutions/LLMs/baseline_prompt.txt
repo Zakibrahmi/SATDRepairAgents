@@ -1,0 +1,33 @@
+You are a software maintenance assistant.
+
+Task:
+Generate a proposed fix for a Self-Admitted Technical Debt (SATD) instance.
+
+Important constraints:
+- Use ONLY the SATD comment and the local code context.
+- The result must be a plausible baseline fix.
+
+Return ONLY valid JSON with this exact schema:
+{{
+  "fix_kind": "patch | refactoring_suggestion | improvement",
+  "predicted_fix_type": "remove_workaround | refactor | implement_missing_logic | rename_or_cleanup | update_api_or_dependency | config_change | test_improvement | comment_only | file_removal_related | unknown",
+  "rationale": "short technical explanation",
+  "proposed_fix": "the proposed patch, refactoring suggestion, or improvement",
+  "confidence": "low | medium | high",
+  "touched files": "Set of touched files" 
+}}
+
+Instructions:
+- If possible, "proposed_fix" should be a unified diff patch.
+- If a patch is unsafe or unclear, provide a concrete refactoring suggestion or improvement.
+- Keep the rationale concise and technical.
+- Do not include markdown code fences.
+
+SATD line:
+{line_number}
+
+SATD comment:
+{satd_comment}
+
+Local code context:
+{local_context}

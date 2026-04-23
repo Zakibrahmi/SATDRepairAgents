@@ -1,0 +1,16 @@
+=== Summary ===
+status
+still_present        1696
+fix_found             458 +21
+comment_not_found       1
+error                   1
+Name: count, dtype: int64
+
+=== Fix Types ===
+fix_type
+file_deleted                           293
+removed_only                           135
+resolved_and_removed                    13
+resolved_comment_retained               11
+partially_resolved_comment_retained      5
+comment_modified                         1

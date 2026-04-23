@@ -1,0 +1,22 @@
+# SATD Resolution Tracker Requirements
+
+# Core dependencies
+pandas>=1.5.0
+openpyxl>=3.0.0
+requests>=2.28.0
+scikit-learn>=1.0.0
+
+# Optional but recommended
+PyGithub>=1.59.0  # Alternative GitHub API wrapper
+
+# For enhanced features (if needed)
+python-dateutil>=2.8.0
+tqdm>=4.65.0  # Progress bars (optional)
+
+# Testing (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+openai
+python-dotenv
+
+
