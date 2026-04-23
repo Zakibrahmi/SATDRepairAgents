@@ -111,6 +111,9 @@ class SATDAgentConfig:
     max_dependency_files: int = 5
     max_search_hits: int = 10
     max_github_discussions: int = 5
+    max_pr_files: int = 25
+    max_pr_issue_comments: int = 10
+    max_pr_review_comments: int = 15
 
     # Optional semantic retrieval knobs
     enable_qdrant: bool = os.getenv("ENABLE_QDRANT", "0") == "1"
