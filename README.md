@@ -10,9 +10,6 @@ SATD comments are developer-written comments that explicitly mention technical d
 - temporary solutions
 - design limitations to be fixed later
 
-The project root is:
-
-- `C:\fixing_SATD`
 
 ## Project Goal
 
@@ -53,7 +50,7 @@ The repository includes:
 
 ## Ground Truth
 
-The ground-truth file is located in:
+The ground-truth dataset is located in:
 
 - `results\SATD_2years_fixed_Final.xlsx`
 
