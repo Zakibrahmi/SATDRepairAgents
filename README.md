@@ -14,6 +14,18 @@ The project root is:
 
 - `C:\fixing_SATD`
 
+## Project Goal
+
+The goal of the project is to evaluate different approaches for repairing SATD comments by comparing generated fixes against developer-authored fixing commits.
+
+The repository includes:
+
+- the SATD dataset
+- the ground-truth fixing commits
+- baseline repair approaches
+- the proposed `SATDRepairAgents` pipeline
+- result files for all approaches
+
 ## Project Structure
 
 ### Top-level folders
@@ -30,8 +42,10 @@ The project root is:
 
 ### Main top-level files
 
+- `README.md`
+  - main repository documentation
 - `README_SATD_AGENT.md`
-  - project overview
+  - complementary project overview
 - `satd_Track_finale.py`
   - script used to identify the fixing commit for SATD instances
 - `requirements.txt`
@@ -59,14 +73,124 @@ Folder:
 
 This folder contains the proposed SATD repair agent pipeline.
 
-Important files:
+#### Solution overview
+
+`SATDRepairAgents` is an agentic repair pipeline that combines repository retrieval, repository exploration, structured SATD understanding, fix planning, patch generation, and validation.
+
+The implementation is organized around the class:
+
+- `fixing_solutions\SATDRepairAgents\satd_agent\pipeline.py`
+
+and is executed through:
+
+- `fixing_solutions\SATDRepairAgents\run_agent.py`
+
+#### Pipeline stages
+
+For each SATD instance, the pipeline performs the following steps:
+
+1. Context retrieval
+   - retrieves local repository context from the cloned repository
+   - gathers surrounding code, recent commit history, dependency files, likely tests, and lexical search hits
+2. Repository exploration
+   - uses a local Codex explorer when configured
+   - summarizes repository structure and likely repair-relevant artifacts
+3. SATD understanding
+   - interprets the debt comment
+   - identifies likely service, root cause, and repair scope
+4. Fix planning
+   - predicts the repair type
+   - generates a short implementation plan
+5. Patch generation
+   - proposes the repair
+   - returns touched files and patch format
+6. Validation
+   - judges syntactic plausibility
+   - estimates localization quality
+   - returns validation and fix confidence
+
+#### Agent roles
+
+The proposed solution is organized as an explicit multi-stage agent pipeline:
+
+- retrieval layer
+  - non-LLM repository artifact collection
+- explorer agent
+  - repository exploration and summarization
+  - can use local Codex CLI
+- generator agent
+  - SATD understanding
+  - fix planning
+  - patch generation
+- judge agent
+  - validation and confidence estimation
+
+#### Input and output
+
+By default, the runner:
+
+- reads `results\SATD_2years_fixed_Final.xlsx`
+- filters the subset with `status = fix_found`
+- runs the repair pipeline instance by instance
+- writes the results to `results\SATDRepairAgent_results.xlsx`
+
+Important generated fields include:
+
+- `agent_fix_kind`
+- `agent_predicted_fix_category`
+- `agent_rationale`
+- `agent_proposed_fix`
+- `agent_patch_format`
+- `agent_touched_files`
+- `validation_status`
+- `validation_syntactic_validity`
+- `validation_localization_accuracy`
+- `validation_confidence`
+- `fix_confidence`
+- `step_trace_json`
+
+#### Configuration
+
+The main runtime configuration is defined in:
+
+- `fixing_solutions\SATDRepairAgents\satd_agent\config.py`
+
+Important configurable items include:
+
+- local cloned repositories directory
+- input and output Excel paths
+- generator model
+- judge model
+- whether to use local Codex for exploration
+- retrieval window sizes
+- whether to run only the main agent or additional comparison models
+
+By default, the main generator model is:
+
+- `openai/gpt-5.2-codex`
+
+#### Important files
 
 - `fixing_solutions\SATDRepairAgents\run_agent.py`
   - main script used to run the SATDRepairAgents approach
 - `fixing_solutions\SATDRepairAgents\requirements_satd_agent.txt`
   - dependencies for the SATDRepairAgents pipeline
-- `fixing_solutions\SATDRepairAgents\satd_agent`
-  - internal implementation of the agent pipeline
+- `fixing_solutions\SATDRepairAgents\satd_agent\config.py`
+  - runtime configuration
+- `fixing_solutions\SATDRepairAgents\satd_agent\pipeline.py`
+  - staged orchestration of the agent workflow
+- `fixing_solutions\SATDRepairAgents\satd_agent\retrieval.py`
+  - local and hybrid context retrieval
+- `fixing_solutions\SATDRepairAgents\satd_agent\explorer.py`
+  - repository exploration layer
+- `fixing_solutions\SATDRepairAgents\satd_agent\llm.py`
+  - model calling logic
+- `fixing_solutions\SATDRepairAgents\satd_agent\prompts.py`
+  - prompts for understanding, planning, patching, and validation
+- `fixing_solutions\SATDRepairAgents\satd_agent\schemas.py`
+  - structured input and output schemas
+
+#### Run
 
 To run the SATDRepairAgents approach:
 
@@ -162,7 +286,7 @@ Files:
 
 If you are new to the project, the easiest order is:
 
-1. Read `README_SATD_AGENT.md`
+1. Read `README.md`
 2. Inspect `data\SATD_2years.xlsx`
 3. Inspect `results\SATD_2years_fixed_Final.xlsx`
 4. Review the approach folders under `fixing_solutions`
@@ -175,7 +299,7 @@ In short:
 
 - `data` contains the SATD comments
 - `results\SATD_2years_fixed_Final.xlsx` contains the ground truth with fixing commits
-- `fixing_solutions\SATDRepairAgents` contains the proposed approach
+- `fixing_solutions\SATDRepairAgents` contains the proposed agentic repair solution
 - `fixing_solutions\LLMs` contains the LLM baselines
 - `fixing_solutions\codexAgent` contains the two Codex prompt variants
 - `results\LLM`, `results\Codex`, and `results\SATDRepairAgents` contain the outputs of each approach
