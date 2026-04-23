@@ -13,6 +13,9 @@ repaired or improved.
 Repository:
 {repo_slug}
 
+Local repository path:
+{repo_dir}
+
 SATD comment:
 {comment}
 
@@ -37,6 +40,8 @@ Return JSON with:
 Important:
 - Do not return dataset metadata such as url, fix_commit, fix_type, or fix_message.
 - Focus only on repository-level evidence that may help repair the SATD.
+- Treat the local repository path as the primary workspace root if you need to inspect
+  code or infer where related files live.
 """
 
 

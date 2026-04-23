@@ -50,15 +50,19 @@ class SATDAgentConfig:
     openrouter_site_url: str = os.getenv("OPENROUTER_SITE_URL", "https://etsmtl.ca")
     openrouter_app_name: str = os.getenv("OPENROUTER_APP_NAME", "SATD-Agent")
 
-       # Configure SATD_CODEX_CLI_COMMAND as a format string. The command should print
-    # JSON to stdout and accept these placeholders:
+    # Configure SATD_CODEX_CLI_COMMAND as a format string. The command should write
+    # JSONL events to stdout and accept these placeholders:
     #   {system_prompt_file}
     #   {user_prompt_file}
+    #   {combined_prompt_file}
+    #   {repo_dir}
     #
-    # Example if your local CLI supports file-based prompts:
-    #   SATD_CODEX_CLI_COMMAND='codex exec --json --system-file "{system_prompt_file}" --prompt-file "{user_prompt_file}"'
+    # By default the explorer uses a local Codex CLI command equivalent to:
+    #   Get-Content -Raw "{combined_prompt_file}" |
+    #   codex exec --json --skip-git-repo-check --cwd "{repo_dir}" -
     #
-    # If this is empty or the local command fails, the code falls back to the API.
+    # If this is empty or the local command fails, the code falls back to the
+    # deterministic heuristic summary.
     use_local_codex_for_exploration: bool = os.getenv("SATD_USE_LOCAL_CODEX_FOR_EXPLORATION", "1") == "1"
     codex_cli_command: str = os.getenv("SATD_CODEX_CLI_COMMAND", "")
     codex_cli_timeout_seconds: int = int(os.getenv("SATD_CODEX_CLI_TIMEOUT_SECONDS", "180"))
